@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>IoT Telemetry Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+font-family:Poppins;
+background:linear-gradient(135deg,#1e3c72,#2a5298);
+margin:0;
+color:white;
+text-align:center;
+}
+
+h1{
+margin-top:30px;
+}
+
+.container{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+margin-top:30px;
+}
+
+.card{
+background:white;
+color:#333;
+width:200px;
+margin:10px;
+padding:20px;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+.value{
+font-size:28px;
+font-weight:bold;
+color:#1e3c72;
+}
+
+.tableBox{
+width:85%;
+margin:auto;
+margin-top:40px;
+background:white;
+padding:20px;
+border-radius:10px;
+color:black;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th{
+background:#1e3c72;
+color:white;
+padding:10px;
+}
+
+td{
+padding:10px;
+border-bottom:1px solid #ddd;
+}
+
+tr:hover{
+background:#f2f2f2;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🌐 IoT Telemetry Dashboard</h1>
+
+<div class="container">
+
+<div class="card">
+<h3>Temperature</h3>
+<div class="value" id="temperature">--</div>
+</div>
+
+<div class="card">
+<h3>Humidity</h3>
+<div class="value" id="humidity">--</div>
+</div>
+
+<div class="card">
+<h3>Soil</h3>
+<div class="value" id="soil">--</div>
+</div>
+
+<div class="card">
+<h3>LDR</h3>
+<div class="value" id="ldr">--</div>
+</div>
+
+</div>
+
+<div class="tableBox">
+
+<h2>Data Telemetry</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>ID Node</th>
+<th>Time</th>
+<th>Temperature</th>
+<th>Humidity</th>
+<th>Soil</th>
+<th>LDR</th>
+</tr>
+</thead>
+
+<tbody id="logTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAm8e2XK78aSFuRV4_0z15T08OdHSagTSM",
+  authDomain: "utstelemetriafni.firebaseapp.com",
+  projectId: "utstelemetriafni",
+  storageBucket: "utstelemetriafni.firebasestorage.app",
+  messagingSenderId: "758938854163",
+  appId: "1:758938854163:web:da529d6db921f0bd2db0e6"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const ref = doc(db,"sensors","node1");
+
+onSnapshot(ref,(doc)=>{
+
+const data=doc.data();
+
+document.getElementById("temperature").innerHTML=data.temperature+" °C";
+document.getElementById("humidity").innerHTML=data.humidity+" %";
+document.getElementById("soil").innerHTML=data.soil;
+document.getElementById("ldr").innerHTML=data.ldr;
+
+const time=new Date().toLocaleTimeString();
+
+const row = `
+<tr>
+<td>Node1</td>
+<td>${time}</td>
+<td>${data.temperature} °C</td>
+<td>${data.humidity} %</td>
+<td>${data.soil}</td>
+<td>${data.ldr}</td>
+</tr>
+`;
+
+document.getElementById("logTable").insertAdjacentHTML("afterbegin",row);
+
+});
+
+</script>
+
+</body>
+</html>
